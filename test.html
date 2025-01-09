@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Agent AI Data Analyst</title>
+  <style>
+    /* Global styles for both light and dark themes */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Dark theme */
+    .dark-theme {
+      background-color: #030637; /* Dark blue */
+      color: #fff;
+    }
+
+    /* Light theme */
+    .light-theme {
+      background-color: #fff; /* White background */
+      color: #000;
+    }
+
+    /* Button Container */
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px; /* Increased gap */
+      padding: 50px 30px;
+      margin-top: 50px;
+    }
+
+    /* Center the main title */
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-top: 30px;
+    }
+
+    /* Navbar styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Dark theme navbar */
+    .dark-theme nav {
+      background-color: #3C0753; /* Dark magenta */
+    }
+
+    /* Light theme navbar */
+    .light-theme nav {
+      background-color: #003366; /* Dark blue */
+      color: white; /* White text */
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      width: 60%;
+    }
+
+    .navbar-left h2 {
+      margin-left: 10px;
+      font-size: 24px;
+    }
+
+    .navbar-left img {
+      height: 40px;
+      width: 120px;
+      margin-right: 15px;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 40%;
+    }
+
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      margin-right: 20px;
+    }
+
+    .file-upload input[type="file"] {
+      background-color: #444;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .file-upload input[type="file"]:hover {
+      background-color: #910A67;
+    }
+
+    .file-upload button {
+      background-color: #720455;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Light theme submit button */
+    .light-theme .file-upload button {
+      background-color: white;
+      color: black;
+    }
+
+    .file-upload button:hover {
+      background-color: #910A67;
+    }
+
+    /* Crescent moon button */
+    .theme-toggle {
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      font-size: 30px;
+      color: #fff;
+      transition: color 0.3s ease;
+    }
+
+    .theme-toggle.dark-theme {
+      color: #000; /* Light theme toggle icon */
+    }
+
+    /* Agent Boxes */
+    .agent-box {
+      width: 250px;
+      padding: 20px; /* Increased padding */
+      border-radius: 10px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.3s ease;
+      height: 380px; /* Increased height by 3 cm */
+    }
+
+    .agent-box img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .agent-box h3 {
+      font-size: 18px;
+      margin-top: 15px;
+      color: white;
+    }
+
+    .agent-box p {
+      font-size: 16px;
+      margin-top: 10px;
+      color: white;
+      flex-grow: 1; /* Allow text to expand and use available space */
+    }
+
+    .agent-box .view-button {
+      background-color: #720455;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+
+    .agent-box .view-button:hover {
+      background-color: #910A67;
+    }
+
+    /* For light theme */
+    .light-theme .agent-box {
+      background-color: white;
+      border: 2px solid #003366; /* Dark blue border */
+      color: black; /* Text color in light theme */
+    }
+
+    .light-theme .agent-box h3,
+    .light-theme .agent-box p {
+      color: black; /* Change text to black inside white box */
+    }
+
+    .light-theme .agent-box .view-button {
+      background-color: #003366;
+    }
+
+    .light-theme .agent-box .view-button:hover {
+      background-color: #004d99;
+    }
+
+    /* For dark theme */
+    .dark-theme .agent-box {
+      background-color: #910A67; /* Pink background */
+      border: 2px solid #3C0753; /* Dark purple border */
+    }
+
+    .dark-theme .agent-box .view-button {
+      background-color: #3C0753; /* Dark purple button */
+    }
+
+    .dark-theme .agent-box .view-button:hover {
+      background-color: #720455;
+    }
+
+  </style>
+</head>
+<body class="dark-theme">
+
+    <nav>
+        <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 20px;">
+          <div class="navbar-left">
+            <img src="" alt="Logo" id="logo-placeholder"> <!-- Placeholder for Logo -->
+            <h2>Ekalavya Engines</h2>
+          </div>
+          
+          <!-- Centered Info button -->
+          <div class="navbar-center" style="flex-grow: 1; text-align: center;">
+            <button id="infoButton" style="margin-top: 1cm; padding: 15px 30px; font-size: 1.5em;">Info</button>
+          </div>
+      
+          <div class="navbar-right">
+            <!-- File upload and submit section -->
+            <div class="file-upload">
+              <button id="browseButton" onclick="showFileOptions()">Browse</button>
+              
+              <!-- Dropdown for file type selection -->
+              <select id="fileType" style="display:none;" onchange="handleFileTypeChange()">
+                <option value="">Select File Type</option>
+                <option value="csv">CSV</option>
+                <option value="excel">Excel</option>
+                <option value="json">JSON</option>
+                <option value="api">API</option>
+              </select>
+      
+              <!-- Local file selection input (hidden initially) -->
+              <input type="file" id="fileUpload" style="display:none;" accept=".csv, .xlsx, .xls, .json" onchange="handleFileUpload()">
+              
+              <!-- API endpoint input (hidden initially) -->
+              <input type="text" id="apiEndpoint" style="display:none;" placeholder="Enter API endpoint" onchange="handleAPIEndpoint()">
+              
+              <!-- Display selected path -->
+              <div id="selectedPathDisplay" style="display:none;"></div>
+      
+              <!-- Submit button (hidden initially) -->
+              <button id="submitButton" style="display:none;" onclick="submitFile()">Submit</button>
+            </div>
+      
+            <!-- Mode Toggle Button -->
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+          </div>
+        </div>
+      </nav>
+      
+      <script>
+        let selectedPath = ''; // Store selected file or API endpoint
+      
+        // Show the options when Browse is clicked
+        function showFileOptions() {
+          document.getElementById('browseButton').style.display = 'none';  // Hide "Browse" button
+          document.getElementById('fileType').style.display = 'inline';    // Show file type dropdown
+        }
+      
+        // Handle the selection of file type
+        function handleFileTypeChange() {
+          const fileType = document.getElementById('fileType').value;
+          const fileUpload = document.getElementById('fileUpload');
+          const apiEndpointInput = document.getElementById('apiEndpoint');
+          const selectedPathDisplay = document.getElementById('selectedPathDisplay');
+          const submitButton = document.getElementById('submitButton');
+      
+          // Reset fields first
+          selectedPath = '';
+          selectedPathDisplay.style.display = 'none';
+          submitButton.style.display = 'none'; // Hide Submit button
+      
+          if (fileType === 'api') {
+            fileUpload.style.display = 'none'; // Hide file upload
+            apiEndpointInput.style.display = 'inline'; // Show API endpoint input
+          } else {
+            apiEndpointInput.style.display = 'none'; // Hide API input
+            fileUpload.style.display = 'inline'; // Show file upload
+          }
+        }
+      
+        // Handle file upload (for CSV, Excel, JSON)
+        function handleFileUpload() {
+          const fileInput = document.getElementById('fileUpload');
+          const file = fileInput.files[0];
+          if (file) {
+            selectedPath = file.name;
+            document.getElementById('selectedPathDisplay').textContent = `Selected file: ${selectedPath}`;
+            document.getElementById('selectedPathDisplay').style.display = 'block';
+            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
+          }
+        }
+      
+        // Handle API endpoint input
+        function handleAPIEndpoint() {
+          const apiInput = document.getElementById('apiEndpoint').value;
+          if (apiInput) {
+            selectedPath = apiInput;
+            document.getElementById('selectedPathDisplay').textContent = `Selected API: ${selectedPath}`;
+            document.getElementById('selectedPathDisplay').style.display = 'block';
+            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
+          }
+        }
+      
+        // Handle submit action
+        function submitFile() {
+          alert(`Submitted: ${selectedPath}`);
+          // Redirect to progress2.html after submission
+          window.location.href = 'progress.html';
+        }
+      
+        // Toggle between light and dark theme
+        function toggleTheme() {
+          const body = document.body;
+          const themeToggle = document.querySelector('.theme-toggle');
+      
+          if (body.classList.contains('dark-theme')) {
+            body.classList.remove('dark-theme');
+            body.classList.add('light-theme');
+            themeToggle.textContent = '🌙'; // Switch to dark theme
+          } else {
+            body.classList.remove('light-theme');
+            body.classList.add('dark-theme');
+            themeToggle.textContent = '🌞'; // Switch to light theme
+          }
+        }
+      </script>
+      
+      
+      
+<!-- Heading Section -->
+<h1>Multi-Agent AI Data Analyst for Comprehensive Data Analysis and Reporting</h1>
+
+
+<!-- Button Container -->
+<div class="button-group">
+    <!-- Agent Boxes -->
+    <div class="agent-box">
+      <img src="agent1.jpg" alt="Input Data Agent Image"> <!-- Image Placeholder -->
+      <h3>Input Data Agent</h3>
+      <p>Requirement Analyst</p>
+      <p>Data Engineer</p>
+      <p>Handles the initial input data and ensures all data is validated and ready for analysis.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent2.jpg" alt="Data Validation Agent Image"> <!-- Image Placeholder -->
+      <h3>Data Validation & Sanity Checking Agent</h3>
+      <p>Functional Business Analyst</p>
+      <p>Data Quality Analyst</p>
+      <p>Validates and performs sanity checks on input data to ensure correctness before processing.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent3.jpg" alt="Data Transformation Agent Image"> <!-- Image Placeholder -->
+      <h3>Data Transformation Agent</h3>
+      <p>Data/BI Analyst</p>
+      <p>Data Scientist</p>
+      <p>Transforms the validated data into formats suitable for deeper analysis and reporting.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent4.jpg" alt="Advanced Analytics Agent Image"> <!-- Image Placeholder -->
+      <h3>Advanced Analytics Agent</h3>
+      <p>Data/BI Analyst</p>
+      <p>Data Engineers</p>
+      <p>Applies advanced analytics techniques on the data to extract meaningful insights.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent5.jpg" alt="Visualization Agent Image"> <!-- Image Placeholder -->
+      <h3>Visualization Agent</h3>
+      <p>Business Analyst</p>
+      <p>Data Analyst</p>
+      <p>Creates visualizations like charts and graphs to simplify complex data for end-users.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent6.jpg" alt="Report Generation Agent Image"> <!-- Image Placeholder -->
+      <h3>Report Generation Agent</h3>
+      <p>Product Analyst</p>
+      <p>Data Analyst</p>
+      <p>Prepares detailed reports based on the analysis to guide strategic business decisions.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent7.jpg" alt="Agent Orchestration Image"> <!-- Image Placeholder -->
+      <h3>Agent Orchestration</h3>
+      <p>Process Analyst</p>
+      <p>Machine Learning Engineer</p>
+      <p>Coordinates and manages the interaction between different agents to ensure smooth workflow.</p>
+      <button class="view-button">View</button>
+    </div>
+  
+    <div class="agent-box">
+      <img src="agent8.jpg" alt="User Interaction Layer Image"> <!-- Image Placeholder -->
+      <h3>User Interaction Layer</h3>
+      <p>Business System Analyst</p>
+      <p>Data Product Analyst</p>
+      <p>Acts as the interface layer to connect users with the system and facilitate decision-making.</p>
+      <button class="view-button">View</button>
+    </div>
+  </div>
+  
+
+</body>
+</html>

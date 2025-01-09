@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-Up and Login Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      display: flex;
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: 5px solid #3C0753; /* Dark purple border */
+      border-radius: 10px;
+      background-color: white;
+    }
+    .left {
+      width: 45%;
+      background-color: #030637;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .left h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .left p {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .right {
+      width: 55%;
+      background-color: #f4f4f4;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .form-group {
+      margin-bottom: 0.8rem;
+    }
+    label {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #030637;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 0.9rem;
+      font-weight: bold;
+      background-color: #3C0753;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #720455;
+    }
+    .logo {
+      width: 60px;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+    .gap {
+      margin-top: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Side -->
+    <div class="left">
+      <img src="placeholder-logo.png" alt="Ekalavya Engines Logo" class="logo">
+      <h1>Welcome to Ekalavya Engines</h1>
+      <p>Your Multi-Agent AI Data Analysis Solution</p>
+    </div>
+    <!-- Right Side -->
+    <div class="right">
+      <!-- Sign-Up Form -->
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="Requirement Analyst">Requirement Analyst</option>
+            <option value="Functional Business Analyst">Functional Business Analyst</option>
+            <option value="Data/BI Analyst">Data/BI Analyst</option>
+            <option value="Business Analyst">Business Analyst</option>
+            <option value="Product Analyst">Product Analyst</option>
+            <option value="Process Analyst">Process Analyst</option>
+            <option value="Business System Analyst">Business System Analyst</option>
+            <option value="Data Engineer">Data Engineer</option>
+            <option value="Data Quality Analyst">Data Quality Analyst</option>
+            <option value="Data Engineer / Data Scientist">Data Engineer / Data Scientist</option>
+            <option value="Data Scientist">Data Scientist</option>
+            <option value="Data Visualization Specialist">Data Visualization Specialist</option>
+            <option value="Data Analyst">Data Analyst</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+            <option value="Data Product Manager">Data Product Manager</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="experience">Experience Level</label>
+          <select id="experience" name="experience">
+            <option value="0-2">0-2 years</option>
+            <option value="3-5">3-5 years</option>
+            <option value="6-10">6-10 years</option>
+            <option value="10+">10+ years</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="projectType">Project Type</label>
+          <select id="projectType" name="projectType">
+            <option value="Agile">Agile</option>
+            <option value="Waterfall">Waterfall</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tool">Main Project Management Tool Used</label>
+          <select id="tool" name="tool">
+            <option value="Jira">Jira</option>
+            <option value="SAP">SAP</option>
+            <option value="Asana">Asana</option>
+            <option value="Trello">Trello</option>
+            <option value="R">R</option>
+            <option value="Julia">Julia</option>
+            <option value="Python">Python</option>
+            <option value="Tableau">Tableau</option>
+            <option value="Power BI">Power BI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="companyType">Type of Company</label>
+          <select id="companyType" name="companyType">
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+          </select>
+        </div>
+        <button type="button" onclick="signUp()">Sign Up</button>
+         <div class="gap"></div>
+        <button type="button" onclick="signUpWithGmail()">Sign Up with Gmail</button>
+      </form>
+      
+      <!-- Login Form -->
+      <form id="login-form" style="display: none;">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button type="button" onclick="login()">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function signUp() {
+      const userData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        role: document.getElementById('role').value,
+        experience: document.getElementById('experience').value,
+        projectType: document.getElementById('projectType').value,
+        tool: document.getElementById('tool').value,
+        companyType: document.getElementById('companyType').value
+      };
+
+      console.log('User Data:', JSON.stringify(userData, null, 2));
+      alert('Sign-up successful! Please log in.');
+
+      document.getElementById('signup-form').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+    }
+    function signUpWithGmail() {
+        const userData = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          role: document.getElementById('role').value,
+          experience: document.getElementById('experience').value,
+          projectType: document.getElementById('projectType').value,
+          tool: document.getElementById('tool').value,
+          companyType: document.getElementById('companyType').value
+        };
+  
+        console.log('User Data:', JSON.stringify(userData, null, 2));
+        alert('Sign-up successful using sumukhavvs90@gmail.com! Please log in.');
+  
+        document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('login-form').style.display = 'block';
+      }
+
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const hardcodedUsername = 'demoUser';
+      const hardcodedPassword = 'demoPass';
+
+      if (username === hardcodedUsername && password === hardcodedPassword) {
+        alert('Login successful!');
+        window.location.href = 'index.html'; // Redirect to index.html
+      } else {
+        alert('Invalid username or password.');
+      }
+    }
+  </script>
+</body>
+</html>

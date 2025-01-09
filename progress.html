@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamechanger Progress Bar</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      color: #39ff14; /* Neon green */
+      font-size: 3rem;
+      margin-top: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff007f; /* Neon pink */
+      font-size: 2rem;
+      margin-top: 10px;
+    }
+
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    /* First Progress Bar (0-100%) */
+    .progress-container {
+      width: 80%;
+      margin: 10px auto;
+      position: relative;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #222;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #333;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #39ff14, #ff007f, #00ffff);
+      box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+      transition: width 0.3s;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      width: 100%;
+      top: -25px;
+      color: #39ff14; /* Neon green */
+      font-size: 1rem;
+    }
+
+    /* Second Progress Bar (1-8 Agents) */
+    .agents-bar {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .agent {
+      width: 12.5%;
+      text-align: center;
+      font-size: 1.5rem;
+      color: white;
+      position: relative;
+    }
+
+    .agent span {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #ff007f; /* Neon pink */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+      position: absolute;
+      top: -35px;
+    }
+
+    .progress-bar-agents {
+      width: 100%;
+      height: 20px;
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #333;
+      margin-top: 10px;
+    }
+
+    .progress-bar-agents-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00ffff, #39ff14);
+      box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+      transition: width 0.3s;
+    }
+
+    /* Sand Clock Animation */
+    .sand-clock-section {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .sand-clock {
+      width: 80px;
+      height: 120px;
+      position: relative;
+      margin: 0 10px;
+      animation: rotate-clock 3s infinite;
+    }
+
+    .sand-clock:nth-child(2) {
+      animation-delay: 1s;
+    }
+
+    .sand-clock:nth-child(3) {
+      animation-delay: 2s;
+    }
+
+    .sand-clock:nth-child(4) {
+      animation-delay: 3s;
+    }
+
+    .sand-top, .sand-bottom {
+      position: absolute;
+      border-left: 40px solid transparent;
+      border-right: 40px solid transparent;
+    }
+
+    .sand-top {
+      border-bottom: 60px solid #ff007f; /* Neon pink */
+      top: 0;
+    }
+
+    .sand-bottom {
+      border-top: 60px solid #39ff14; /* Neon green */
+      bottom: 0;
+    }
+
+    @keyframes rotate-clock {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(180deg); }
+    }
+
+    /* Stop Button */
+    .stop-button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #ff007f; /* Neon pink */
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+    }
+
+    .stop-button:hover {
+      background: #39ff14; /* Neon green */
+      box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+    }
+
+    /* Business Analyst Facts */
+    .facts {
+      text-align: center;
+      margin-top: 20px;
+      color: #39ff14; /* Neon green */
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gamechanger Progress Bar</h1>
+  <h2>Loading...</h2>
+  
+  <div class="progress-section">
+    <div class="progress-container">
+      <div class="progress-labels">
+        <span>0%</span>
+        <span>100%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-bar-inner"></div>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar-agents">
+        <div class="progress-bar-agents-inner"></div>
+      </div>
+      <div class="agents-bar">
+        <span class="agent"><span>1</span></span>
+        <span class="agent"><span>2</span></span>
+        <span class="agent"><span>3</span></span>
+        <span class="agent"><span>4</span></span>
+        <span class="agent"><span>5</span></span>
+        <span class="agent"><span>6</span></span>
+        <span class="agent"><span>7</span></span>
+        <span class="agent"><span>8</span></span>
+      </div>
+    </div>
+
+    <div class="sand-clock-section">
+      <div class="sand-clock">
+        <div class="sand-top"></div>
+        <div class="sand-bottom"></div>
+      </div>
+      <div class="sand-clock">
+        <div class="sand-top"></div>
+        <div class="sand-bottom"></div>
+      </div>
+      <div class="sand-clock">
+        <div class="sand-top"></div>
+        <div class="sand-bottom"></div>
+      </div>
+      <div class="sand-clock">
+        <div class="sand-top"></div>
+        <div class="sand-bottom"></div>
+      </div>
+    </div>
+
+    <button class="stop-button" onclick="stopProgress()">Stop</button>
+    <div class="facts" id="facts"></div>
+  </div>
+
+  <script>
+    const progressBarInner = document.querySelector('.progress-bar-inner');
+    const agentsBarInner = document.querySelector('.progress-bar-agents-inner');
+    const stopButton = document.querySelector('.stop-button');
+    const facts = [
+      "Data is the new oil.",
+      "AI will replace repetitive jobs by 2030.",
+      "Business analysis focuses on delivering value.",
+      "90% of startups fail due to lack of market fit.",
+      "Customer-centric companies perform better.",
+      "Cloud computing has redefined scalability.",
+      "Data visualization boosts decision-making.",
+      "Blockchain ensures transparency.",
+      "Agile is the future of project management.",
+      "Machine learning will redefine automation."
+    ];
+    const factsDiv = document.getElementById('facts');
+    let interval;
+
+    let factIndex = 0;
+    function showFact() {
+      factsDiv.textContent = facts[factIndex];
+      factIndex = (factIndex + 1) % facts.length;
+    }
+    showFact();
+
+    let progress = 0;
+    function updateProgress() {
+      progress += 1;
+      progressBarInner.style.width = progress + '%';
+      agentsBarInner.style.width = progress + '%';
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        stopButton.textContent = 'Done';
+      }
+    }
+
+    interval = setInterval(() => {
+      updateProgress();
+      if (progress % 2 === 0) showFact();
+    }, 120);
+
+    function stopProgress() {
+      if (progress === 100) {
+        // Redirect to test.html when Done is clicked
+        window.location.href = 'index.html';
+      } else {
+        clearInterval(interval);
+        stopButton.textContent = 'Stopped';
+      }
+    }
+  </script>
+</body>
+</html>
