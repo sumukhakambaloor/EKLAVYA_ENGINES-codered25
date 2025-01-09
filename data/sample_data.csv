@@ -1,0 +1,14 @@
+CustomerName,Amount,Profit,Quantity,PaymentMode,Category,SubCategory,State,Month
+Shiva,5000,800,20,COD,Clothing,Trousers,Maharashtra,January
+Surita,4500,750,15,Credit Card,Electronics,Phones,Maharashtra,January
+Bhishm,4000,600,25,UPI,Clothing,Saree,Maharashtra,February
+Parth,3500,500,18,Debit Card,Furniture,Accessories,Maharashtra,February
+Yogesh,3000,400,30,EMI,Electronics,Printers,Maharashtra,February
+Chhin,2800,350,22,COD,Clothing,Trousers,Maharashtra,March
+Mayank,2500,300,28,Credit Card,Clothing,Saree,Maharashtra,March
+Rita,2200,250,35,UPI,Electronics,Phones,Maharashtra,March
+Prem,2000,200,25,Debit Card,Furniture,Accessories,Maharashtra,January
+Tejas,1800,180,32,EMI,Clothing,Trousers,Maharashtra,January
+Shreya,1500,150,28,COD,Electronics,Printers,Maharashtra,February
+Shikhar,1200,120,15,Credit Card,Clothing,Saree,Maharashtra,February
+Ankita,1000,100,13,UPI,Clothing,Accessories,Maharashtra,March

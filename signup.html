@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign-Up and Login Page</title>
+  <title>Sign Up - Eklavya Engines</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
-      height: 100vh;
-      background-color: #f4f4f4;
+      min-height: 100vh;
+      background-color: #030637;
     }
     .container {
       display: flex;
@@ -18,9 +19,10 @@
       max-width: 1100px;
       margin: auto;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border: 5px solid #3C0753; /* Dark purple border */
+      border: 5px solid #3C0753;
       border-radius: 10px;
       background-color: white;
+      height: fit-content;
     }
     .left {
       width: 45%;
@@ -30,64 +32,104 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 1.5rem;
+      padding: 2rem;
+      position: relative;
     }
     .left h1 {
-      font-size: 1.5rem;
+      font-size: 2rem;
       margin-bottom: 1rem;
+      text-align: center;
     }
     .left p {
-      font-size: 0.9rem;
+      font-size: 1.1rem;
       margin-bottom: 1.5rem;
       text-align: center;
+      line-height: 1.6;
     }
     .right {
       width: 55%;
-      background-color: #f4f4f4;
-      padding: 1.5rem;
+      background-color: #fff;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
     .form-group {
-      margin-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
     }
     label {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #030637;
       display: block;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
     }
     input, select {
       width: 100%;
-      padding: 0.6rem;
-      font-size: 0.8rem;
-      border: 1px solid #ddd;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
       border-radius: 5px;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #720455;
     }
     button {
       width: 100%;
-      padding: 0.7rem;
-      font-size: 0.9rem;
+      padding: 1rem;
+      font-size: 1rem;
       font-weight: bold;
-      background-color: #3C0753;
+      background-color: #720455;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #720455;
-    }
-    .logo {
-      width: 60px;
-      height: auto;
       margin-bottom: 1rem;
     }
-    .gap {
-      margin-top: 0.8rem;
+    button:hover {
+      background-color: #910A67;
+    }
+    .logo {
+      width: 250px;
+      height: auto;
+      margin-bottom: 2rem;
+      object-fit: contain;
+    }
+    .back-to-home {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .back-to-home:hover {
+      text-decoration: underline;
+    }
+    .form-switch {
+      text-align: center;
+      margin-top: 1rem;
+      color: #030637;
+    }
+    .form-switch a {
+      color: #720455;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .form-switch a:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: #d32f2f;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
     }
   </style>
 </head>
@@ -95,9 +137,9 @@
   <div class="container">
     <!-- Left Side -->
     <div class="left">
-      <img src="placeholder-logo.png" alt="Ekalavya Engines Logo" class="logo">
-      <h1>Welcome to Ekalavya Engines</h1>
-      <p>Your Multi-Agent AI Data Analysis Solution</p>
+      <a href="index.html" class="back-to-home">← Back to Home</a>
+      <img src="images/EKLAVYA ENGINES/EE2.png" alt="Eklavya Engines Logo" class="logo">
+      <p>Join us to unlock the power of intelligent data analysis and transform your business insights.</p>
     </div>
     <!-- Right Side -->
     <div class="right">
@@ -105,15 +147,22 @@
       <form id="signup-form">
         <div class="form-group">
           <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Enter your full name">
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required>
         </div>
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email">
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <div id="email-error" class="error-message">Please enter a valid email address</div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <div id="password-error" class="error-message">Password must be at least 8 characters long</div>
         </div>
         <div class="form-group">
           <label for="role">Role</label>
-          <select id="role" name="role">
+          <select id="role" name="role" required>
+            <option value="">Select your role</option>
             <option value="Requirement Analyst">Requirement Analyst</option>
             <option value="Functional Business Analyst">Functional Business Analyst</option>
             <option value="Data/BI Analyst">Data/BI Analyst</option>
@@ -123,7 +172,6 @@
             <option value="Business System Analyst">Business System Analyst</option>
             <option value="Data Engineer">Data Engineer</option>
             <option value="Data Quality Analyst">Data Quality Analyst</option>
-            <option value="Data Engineer / Data Scientist">Data Engineer / Data Scientist</option>
             <option value="Data Scientist">Data Scientist</option>
             <option value="Data Visualization Specialist">Data Visualization Specialist</option>
             <option value="Data Analyst">Data Analyst</option>
@@ -131,115 +179,143 @@
             <option value="Data Product Manager">Data Product Manager</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="experience">Experience Level</label>
-          <select id="experience" name="experience">
-            <option value="0-2">0-2 years</option>
-            <option value="3-5">3-5 years</option>
-            <option value="6-10">6-10 years</option>
-            <option value="10+">10+ years</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="projectType">Project Type</label>
-          <select id="projectType" name="projectType">
-            <option value="Agile">Agile</option>
-            <option value="Waterfall">Waterfall</option>
-            <option value="Hybrid">Hybrid</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="tool">Main Project Management Tool Used</label>
-          <select id="tool" name="tool">
-            <option value="Jira">Jira</option>
-            <option value="SAP">SAP</option>
-            <option value="Asana">Asana</option>
-            <option value="Trello">Trello</option>
-            <option value="R">R</option>
-            <option value="Julia">Julia</option>
-            <option value="Python">Python</option>
-            <option value="Tableau">Tableau</option>
-            <option value="Power BI">Power BI</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="companyType">Type of Company</label>
-          <select id="companyType" name="companyType">
-            <option value="Small">Small</option>
-            <option value="Medium">Medium</option>
-            <option value="Large">Large</option>
-          </select>
-        </div>
-        <button type="button" onclick="signUp()">Sign Up</button>
-         <div class="gap"></div>
+        <button type="submit" onclick="signUp(event)">Sign Up</button>
         <button type="button" onclick="signUpWithGmail()">Sign Up with Gmail</button>
+        <div class="form-switch">
+          Already have an account? <a href="#" onclick="toggleForm('login')">Log In</a>
+        </div>
       </form>
       
       <!-- Login Form -->
       <form id="login-form" style="display: none;">
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter username">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="Enter your email" required>
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter password">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required>
         </div>
-        <button type="button" onclick="login()">Login</button>
+        <button type="submit" onclick="login(event)">Login</button>
+        <button type="button" onclick="loginWithGmail()">Login with Gmail</button>
+        <div class="form-switch">
+          Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a>
+        </div>
       </form>
     </div>
   </div>
 
   <script>
-    function signUp() {
-      const userData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        role: document.getElementById('role').value,
-        experience: document.getElementById('experience').value,
-        projectType: document.getElementById('projectType').value,
-        tool: document.getElementById('tool').value,
-        companyType: document.getElementById('companyType').value
-      };
-
-      console.log('User Data:', JSON.stringify(userData, null, 2));
-      alert('Sign-up successful! Please log in.');
-
-      document.getElementById('signup-form').style.display = 'none';
-      document.getElementById('login-form').style.display = 'block';
-    }
-    function signUpWithGmail() {
-        const userData = {
-          name: document.getElementById('name').value,
-          email: document.getElementById('email').value,
-          role: document.getElementById('role').value,
-          experience: document.getElementById('experience').value,
-          projectType: document.getElementById('projectType').value,
-          tool: document.getElementById('tool').value,
-          companyType: document.getElementById('companyType').value
-        };
-  
-        console.log('User Data:', JSON.stringify(userData, null, 2));
-        alert('Sign-up successful using sumukhavvs90@gmail.com! Please log in.');
-  
-        document.getElementById('signup-form').style.display = 'none';
-        document.getElementById('login-form').style.display = 'block';
-      }
-
-    function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      const hardcodedUsername = 'demoUser';
-      const hardcodedPassword = 'demoPass';
-
-      if (username === hardcodedUsername && password === hardcodedPassword) {
-        alert('Login successful!');
-        window.location.href = 'index.html'; // Redirect to index.html
+    function toggleForm(formType) {
+      const signupForm = document.getElementById('signup-form');
+      const loginForm = document.getElementById('login-form');
+      
+      if (formType === 'login') {
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        window.location.hash = 'login';
       } else {
-        alert('Invalid username or password.');
+        signupForm.style.display = 'block';
+        loginForm.style.display = 'none';
+        window.location.hash = '';
       }
     }
+
+    function signUp(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      // Basic validation
+      if (!validateEmail(email)) {
+        document.getElementById('email-error').style.display = 'block';
+        return;
+      }
+      if (password.length < 8) {
+        document.getElementById('password-error').style.display = 'block';
+        return;
+      }
+
+      // Store user data in localStorage
+      const userData = {
+        name,
+        email,
+        role,
+        password: btoa(password) // Basic encoding (not secure for production)
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+
+      // Redirect to index page
+      window.location.href = 'index.html';
+    }
+
+    function login(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      // For demo purposes, we'll just check if the user exists in localStorage
+      const storedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      
+      if (storedUser.email === email && btoa(password) === storedUser.password) {
+        window.location.href = 'index.html';
+      } else {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.color = '#d32f2f';
+        errorDiv.style.marginTop = '1rem';
+        errorDiv.textContent = 'Invalid email or password';
+        
+        const loginForm = document.getElementById('login-form');
+        // Remove any existing error message
+        const existingError = loginForm.querySelector('.login-error');
+        if (existingError) {
+          existingError.remove();
+        }
+        errorDiv.className = 'login-error';
+        loginForm.appendChild(errorDiv);
+      }
+    }
+
+    function signUpWithGmail() {
+      // Placeholder for Gmail signup integration
+      alert('Gmail signup integration coming soon!');
+    }
+
+    function loginWithGmail() {
+      // Placeholder for Gmail login integration
+      alert('Gmail login integration coming soon!');
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // Check if we should show login form (based on URL hash)
+    function checkHash() {
+      if (window.location.hash === '#login') {
+        toggleForm('login');
+      }
+    }
+
+    // Check if user is already logged in
+    function checkAuth() {
+      const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      if (user.email) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      checkHash();
+    });
   </script>
 </body>
 </html>

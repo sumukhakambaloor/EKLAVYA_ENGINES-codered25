@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #720455;
+            --secondary-color: #3C0753;
+            --background-color: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .nav-bar {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .nav-bar h1 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: flex-end;
+        }
+
+        .button-group button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-group button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .file-upload {
+            display: none;
+        }
+
+        .upload-status {
+            color: #ffffff;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-box {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .kpi-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .payment-analysis {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-analysis h3 {
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table th,
+        .payment-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .payment-table th {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .trend-indicator {
+            display: inline-block;
+            margin-left: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        .insights-container {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .insights-container h3 {
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .insight-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .insight-title {
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-description {
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid,
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .chart-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <h1>Analytics Dashboard</h1>
+    </nav>
+
+    <div class="container">
+        <div class="user-info" style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 1rem; color: #fff;">
+            <span id="userName" style="margin-right: 1rem;"></span>
+            <button onclick="logout()" style="padding: 0.5rem 1rem; background: #720455; border: none; color: white; border-radius: 4px; cursor: pointer;">Logout</button>
+        </div>
+        <div class="button-group">
+            <input type="file" id="csvFileInput" accept=".csv" class="file-upload" onchange="handleFileUpload(event)">
+            <button onclick="downloadAllCharts()">Download All Charts</button>
+            <button onclick="downloadDashboard()">Download Full Dashboard</button>
+            <button onclick="document.getElementById('csvFileInput').click()">Analyze New Data</button>
+        </div>
+        <div class="upload-status" id="uploadStatus"></div>
+
+        <div class="kpi-grid">
+            <div class="kpi-box">
+                <div class="kpi-value" id="conversionRate">0%</div>
+                <div class="kpi-label">Conversion Rate</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-value" id="avgOrderValue">₹0</div>
+                <div class="kpi-label">Average Order Value</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-value" id="profitMargin">0%</div>
+                <div class="kpi-label">Profit Margin</div>
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="chart-container">
+                <h3>Sales Trend</h3>
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Category Performance</h3>
+                <canvas id="categoryPerformanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="payment-analysis">
+            <h3>Payment Mode Analysis</h3>
+            <table class="payment-table" id="paymentAnalysisTable">
+                <thead>
+                    <tr>
+                        <th>Payment Mode</th>
+                        <th>Total Amount</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <h3>Product Performance Matrix</h3>
+            <canvas id="productPerformanceChart"></canvas>
+        </div>
+
+        <div class="insights-container">
+            <h3>Key Insights</h3>
+            <div id="insightsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Store chart instances
+        let charts = {
+            salesTrend: null,
+            categoryPerformance: null,
+            productPerformance: null
+        };
+
+        function destroyCharts() {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => {
+                if (chart) {
+                    chart.destroy();
+                }
+            });
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/sample_data.csv');
+                const csvText = await response.text();
+                const data = parseCSV(csvText);
+                processAnalytics(data);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading data. Please try again.');
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = lines[i].split(',');
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index].trim();
+                });
+                data.push(row);
+            }
+
+            return data;
+        }
+
+        function processAnalytics(data) {
+            destroyCharts(); // Destroy existing charts before creating new ones
+            calculateKPIs(data);
+            createSalesTrendChart(data);
+            createCategoryPerformanceChart(data);
+            createPaymentAnalysis(data);
+            createProductPerformanceMatrix(data);
+            generateInsights(data);
+        }
+
+        function calculateKPIs(data) {
+            // Calculate Conversion Rate (assuming total visits is 3x the orders)
+            const totalOrders = data.length;
+            const estimatedVisits = totalOrders * 3;
+            const conversionRate = (totalOrders / estimatedVisits) * 100;
+
+            // Calculate Average Order Value
+            const totalAmount = data.reduce((sum, row) => sum + parseFloat(row.Amount), 0);
+            const avgOrderValue = totalAmount / totalOrders;
+
+            // Calculate Profit Margin
+            const totalProfit = data.reduce((sum, row) => sum + parseFloat(row.Profit), 0);
+            const profitMargin = (totalProfit / totalAmount) * 100;
+
+            document.getElementById('conversionRate').textContent = conversionRate.toFixed(1) + '%';
+            document.getElementById('avgOrderValue').textContent = '₹' + avgOrderValue.toFixed(2);
+            document.getElementById('profitMargin').textContent = profitMargin.toFixed(1) + '%';
+        }
+
+        function createSalesTrendChart(data) {
+            const monthlyData = {};
+
+            data.forEach(row => {
+                monthlyData[row.Month] = (monthlyData[row.Month] || 0) + parseFloat(row.Amount);
+            });
+
+            const months = Object.keys(monthlyData);
+            const sales = Object.values(monthlyData);
+
+            // Calculate trend line
+            const points = sales.map((y, i) => [i, y]);
+            const result = regression.linear(points);
+            const trend = months.map((_, i) => result.predict(i)[1]);
+
+            const ctx = document.getElementById('salesTrendChart').getContext('2d');
+            charts.salesTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Sales',
+                        data: sales,
+                        borderColor: '#4361ee',
+                        tension: 0.4
+                    }, {
+                        label: 'Trend',
+                        data: trend,
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        tension: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCategoryPerformanceChart(data) {
+            const categoryData = {};
+
+            data.forEach(row => {
+                if (!categoryData[row.Category]) {
+                    categoryData[row.Category] = {
+                        sales: 0,
+                        profit: 0
+                    };
+                }
+                categoryData[row.Category].sales += parseFloat(row.Amount);
+                categoryData[row.Category].profit += parseFloat(row.Profit);
+            });
+
+            const categories = Object.keys(categoryData);
+            const profitMargins = categories.map(cat => 
+                (categoryData[cat].profit / categoryData[cat].sales) * 100
+            );
+            const sales = categories.map(cat => categoryData[cat].sales);
+
+            const ctx = document.getElementById('categoryPerformanceChart').getContext('2d');
+            charts.categoryPerformance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Sales',
+                        data: sales,
+                        backgroundColor: '#4361ee',
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Profit Margin %',
+                        data: profitMargins,
+                        backgroundColor: '#ef4444',
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: { display: false },
+                            ticks: { color: '#fff' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPaymentAnalysis(data) {
+            const paymentData = {};
+
+            data.forEach(row => {
+                if (!paymentData[row.PaymentMode]) {
+                    paymentData[row.PaymentMode] = {
+                        sales: 0,
+                        count: 0
+                    };
+                }
+                paymentData[row.PaymentMode].sales += parseFloat(row.Amount);
+                paymentData[row.PaymentMode].count += 1;
+            });
+
+            const tableBody = document.getElementById('paymentAnalysisTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+
+            Object.entries(paymentData).forEach(([mode, data]) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = mode;
+                row.insertCell(1).textContent = '₹' + data.sales.toFixed(2);
+                
+                const trendCell = row.insertCell(2);
+                const trendValue = data.sales / data.count;
+                const trendIndicator = document.createElement('span');
+                trendIndicator.className = `trend-indicator ${trendValue > 1000 ? 'trend-up' : 'trend-down'}`;
+                trendIndicator.textContent = trendValue > 1000 ? '↑' : '↓';
+                trendCell.appendChild(trendIndicator);
+            });
+        }
+
+        function createProductPerformanceMatrix(data) {
+            const productData = {};
+            data.forEach(row => {
+                if (!productData[row.SubCategory]) {
+                    productData[row.SubCategory] = {
+                        quantity: 0,
+                        profit: 0
+                    };
+                }
+                productData[row.SubCategory].quantity += parseFloat(row.Quantity);
+                productData[row.SubCategory].profit += parseFloat(row.Profit);
+            });
+
+            const products = Object.keys(productData);
+            const quantities = products.map(p => productData[p].quantity);
+            const profits = products.map(p => productData[p].profit);
+
+            const ctx = document.getElementById('productPerformanceChart').getContext('2d');
+            charts.productPerformance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Products',
+                        data: products.map((p, i) => ({
+                            x: quantities[i],
+                            y: profits[i]
+                        })),
+                        backgroundColor: '#4361ee'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return products[context.dataIndex];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Profit',
+                                color: '#fff'
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Quantity Sold',
+                                color: '#fff'
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateInsights(data) {
+            const insights = [];
+
+            // Best performing category
+            const categoryPerformance = {};
+
+            data.forEach(row => {
+                if (!categoryPerformance[row.Category]) {
+                    categoryPerformance[row.Category] = {
+                        sales: 0,
+                        profit: 0
+                    };
+                }
+                categoryPerformance[row.Category].sales += parseFloat(row.Amount);
+                categoryPerformance[row.Category].profit += parseFloat(row.Profit);
+            });
+
+            const bestCategory = Object.entries(categoryPerformance)
+                .sort((a, b) => b[1].profit - a[1].profit)[0];
+
+            insights.push({
+                title: 'Top Performing Category',
+                description: `${bestCategory[0]} is the best performing category with ₹${bestCategory[1].profit.toFixed(2)} in profits.`
+            });
+
+            // Payment mode analysis
+            const paymentModes = {};
+
+            data.forEach(row => {
+                if (!paymentModes[row.PaymentMode]) {
+                    paymentModes[row.PaymentMode] = 0;
+                }
+                paymentModes[row.PaymentMode] += parseFloat(row.Amount);
+            });
+
+            const preferredPayment = Object.entries(paymentModes)
+                .sort((a, b) => b[1] - a[1])[0];
+
+            insights.push({
+                title: 'Preferred Payment Method',
+                description: `${preferredPayment[0]} is the most used payment method with ₹${preferredPayment[1].toFixed(2)} in transactions.`
+            });
+
+            // Monthly trend
+            const monthlyTrend = {};
+            data.forEach(row => {
+                if (!monthlyTrend[row.Month]) {
+                    monthlyTrend[row.Month] = 0;
+                }
+                monthlyTrend[row.Month] += parseFloat(row.Amount);
+            });
+
+            const months = Object.keys(monthlyTrend);
+            const lastMonth = months[months.length - 1];
+            const previousMonth = months[months.length - 2];
+            const growth = ((monthlyTrend[lastMonth] - monthlyTrend[previousMonth]) / monthlyTrend[previousMonth]) * 100;
+
+            insights.push({
+                title: 'Monthly Growth',
+                description: `Sales ${growth > 0 ? 'increased' : 'decreased'} by ${Math.abs(growth).toFixed(1)}% from ${previousMonth} to ${lastMonth}.`
+            });
+
+            // Display insights
+            const container = document.getElementById('insightsContainer');
+            container.innerHTML = '';
+            insights.forEach(insight => {
+                const div = document.createElement('div');
+                div.className = 'insight-item';
+                div.innerHTML = `
+                    <div class="insight-title">${insight.title}</div>
+                    <div class="insight-description">${insight.description}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function downloadChart(chartId) {
+            const canvas = document.getElementById(chartId);
+            const link = document.createElement('a');
+            link.download = `${chartId}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAllCharts() {
+            // Download all canvas charts
+            const chartIds = ['salesTrendChart', 'categoryPerformanceChart', 'productPerformanceChart'];
+            chartIds.forEach(chartId => downloadChart(chartId));
+            
+            // Download table
+            downloadTableAsImage('paymentAnalysisTable');
+        }
+
+        function downloadDashboard() {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            // Get the container element
+            const container = document.querySelector('.container');
+            
+            // Set canvas dimensions
+            const containerRect = container.getBoundingClientRect();
+            canvas.width = containerRect.width * 2;
+            canvas.height = containerRect.height * 2;
+            context.scale(2, 2); // Increase resolution
+
+            // Convert DOM to canvas
+            html2canvas(container, {
+                canvas: canvas,
+                backgroundColor: '#1a1a2e',
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(function(canvas) {
+                const link = document.createElement('a');
+                link.download = 'analytics-dashboard.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+        
+        function generateRandomData() {
+            // Generate random data
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const categories = ['Electronics', 'Clothing', 'Food', 'Books', 'Home', 'Sports'];
+            const paymentModes = ['Credit Card', 'Debit Card', 'UPI', 'Cash', 'Net Banking'];
+            const subCategories = ['Laptops', 'Phones', 'T-shirts', 'Jeans', 'Groceries', 'Novels', 'Furniture', 'Equipment'];
+
+            const data = [];
+            const numRecords = Math.floor(Math.random() * 100) + 50; // Generate 50-150 records
+
+            for (let i = 0; i < numRecords; i++) {
+                const amount = Math.random() * 10000 + 1000; // Random amount between 1000-11000
+                const profit = amount * (Math.random() * 0.3 + 0.1); // Random profit 10-40% of amount
+                const quantity = Math.floor(Math.random() * 10) + 1; // Random quantity 1-10
+
+                data.push({
+                    Month: months[Math.floor(Math.random() * months.length)],
+                    Category: categories[Math.floor(Math.random() * categories.length)],
+                    SubCategory: subCategories[Math.floor(Math.random() * subCategories.length)],
+                    Amount: amount.toString(),
+                    Profit: profit.toString(),
+                    Quantity: quantity.toString(),
+                    PaymentMode: paymentModes[Math.floor(Math.random() * paymentModes.length)]
+                });
+            }
+
+            // Process the random data
+            processAnalytics(data);
+
+            // Add animation effect to KPIs
+            const kpiValues = document.querySelectorAll('.kpi-value');
+            kpiValues.forEach(kpi => {
+                kpi.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    kpi.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusElement = document.getElementById('uploadStatus');
+            statusElement.innerHTML = `Analyzing ${file.name} <div class="loading-spinner"></div>`;
+
+            try {
+                // Read and validate the CSV file
+                const text = await file.text();
+                const data = parseCSV(text);
+
+                // Validate required columns
+                const requiredColumns = ['Month', 'Category', 'SubCategory', 'Amount', 'Profit', 'Quantity', 'PaymentMode'];
+                const headers = Object.keys(data[0] || {});
+                const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+                if (missingColumns.length > 0) {
+                    throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
+                }
+
+                // Validate data types
+                const invalidRows = data.filter(row => {
+                    return isNaN(parseFloat(row.Amount)) || 
+                           isNaN(parseFloat(row.Profit)) || 
+                           isNaN(parseFloat(row.Quantity));
+                });
+
+                if (invalidRows.length > 0) {
+                    throw new Error('Invalid data: Amount, Profit, and Quantity must be numbers');
+                }
+
+                // Process the data
+                processAnalytics(data);
+
+                // Add animation effect to KPIs
+                const kpiValues = document.querySelectorAll('.kpi-value');
+                kpiValues.forEach(kpi => {
+                    kpi.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        kpi.style.transform = 'scale(1)';
+                    }, 200);
+                });
+
+                statusElement.innerHTML = `Successfully analyzed ${file.name}`;
+                setTimeout(() => {
+                    statusElement.innerHTML = '';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error processing file:', error);
+                statusElement.innerHTML = `Error: ${error.message}`;
+                setTimeout(() => {
+                    statusElement.innerHTML = '';
+                }, 5000);
+            }
+
+            // Clear the file input
+            event.target.value = '';
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!user.email) {
+                window.location.href = 'signup.html#login';
+                return;
+            }
+            document.getElementById('userName').textContent = `Welcome, ${user.name} (${user.role})`;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'signup.html#login';
+        }
+
+        // Call checkAuth when page loads
+        window.addEventListener('load', () => {
+            checkAuth();
+            loadData();
+        });
+    </script>
+</body>
+</html>

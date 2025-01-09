@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization Agent</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #FF69B4;
+            --secondary-color: #FF1493;
+            --accent-color: #FFB6C1;
+            --background-dark: #1a1a2e;
+            --card-background: #2d2d44;
+            --text-primary: #fff;
+            --text-secondary: #FFB6C1;
+            --text-muted: #FFC0CB;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .controls-panel {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .chart-container {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-height: 500px;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: var(--background-dark);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.selected {
+            border-color: var(--text-primary);
+        }
+
+        #chartCanvas {
+            width: 100% !important;
+            height: 500px !important;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="location.href='index.html'">← Back to Home</button>
+            <button class="nav-button" onclick="location.href='analytics.html'">Go to Analytics →</button>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="totalAmount">$0</div>
+                <div class="metric-label">Total Amount</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="totalProfit">$0</div>
+                <div class="metric-label">Total Profit</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="totalQuantity">0</div>
+                <div class="metric-label">Total Quantity</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avgProfit">$0</div>
+                <div class="metric-label">Average Profit</div>
+            </div>
+        </div>
+
+        <div class="visualization-grid">
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label>Chart Type</label>
+                    <select id="chartType" onchange="updateChart()">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="doughnut">Doughnut Chart</option>
+                        <option value="scatter">Scatter Plot</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>X-Axis Data</label>
+                    <select id="xAxis" onchange="updateChart()"></select>
+                </div>
+
+                <div class="control-group">
+                    <label>Y-Axis Data</label>
+                    <select id="yAxis" onchange="updateChart()"></select>
+                </div>
+
+                <div class="control-group">
+                    <label>Aggregation</label>
+                    <select id="aggregation" onchange="updateChart()">
+                        <option value="sum">Sum</option>
+                        <option value="average">Average</option>
+                        <option value="count">Count</option>
+                        <option value="max">Maximum</option>
+                        <option value="min">Minimum</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Color Scheme</label>
+                    <div class="color-picker">
+                        <div class="color-option" style="background: #FF69B4" onclick="setColorScheme('#FF69B4')"></div>
+                        <div class="color-option" style="background: #4BC0C0" onclick="setColorScheme('#4BC0C0')"></div>
+                        <div class="color-option" style="background: #FF9F40" onclick="setColorScheme('#FF9F40')"></div>
+                        <div class="color-option" style="background: #9966FF" onclick="setColorScheme('#9966FF')"></div>
+                        <div class="color-option" style="background: #36A2EB" onclick="setColorScheme('#36A2EB')"></div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Additional Options</label>
+                    <label><input type="checkbox" id="showLegend" onchange="updateChart()"> Show Legend</label>
+                    <label><input type="checkbox" id="showGrid" onchange="updateChart()"> Show Grid</label>
+                    <label><input type="checkbox" id="enableAnimation" onchange="updateChart()"> Enable Animation</label>
+                </div>
+
+                <button class="button" onclick="downloadChart()">Download Chart</button>
+                <button class="button" onclick="resetChart()">Reset</button>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="chartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChart = null;
+        let dataset = [];
+        let selectedColor = '#FF69B4';
+
+        async function loadData() {
+            try {
+                const response = await fetch('data/sample_data.csv');
+                const csvText = await response.text();
+                
+                // Parse CSV
+                const lines = csvText.split('\n');
+                const headers = lines[0].split(',');
+                
+                // Populate dropdowns
+                const xAxisSelect = document.getElementById('xAxis');
+                const yAxisSelect = document.getElementById('yAxis');
+                
+                headers.forEach(header => {
+                    xAxisSelect.add(new Option(header.trim(), header.trim()));
+                    yAxisSelect.add(new Option(header.trim(), header.trim()));
+                });
+
+                // Parse data
+                dataset = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index]?.trim();
+                    });
+                    return row;
+                });
+
+                // Set initial selections
+                yAxisSelect.value = 'Amount';
+                xAxisSelect.value = 'State';
+
+                updateMetrics();
+                updateChart();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateMetrics() {
+            const totalAmount = dataset.reduce((sum, row) => sum + (parseFloat(row.Amount) || 0), 0);
+            const totalProfit = dataset.reduce((sum, row) => sum + (parseFloat(row.Profit) || 0), 0);
+            const totalQuantity = dataset.reduce((sum, row) => sum + (parseFloat(row.Quantity) || 0), 0);
+            const avgProfit = totalProfit / dataset.length;
+
+            document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+            document.getElementById('totalProfit').textContent = `$${totalProfit.toFixed(2)}`;
+            document.getElementById('totalQuantity').textContent = totalQuantity;
+            document.getElementById('avgProfit').textContent = `$${avgProfit.toFixed(2)}`;
+        }
+
+        function aggregateData() {
+            const xAxis = document.getElementById('xAxis').value;
+            const yAxis = document.getElementById('yAxis').value;
+            const aggregationType = document.getElementById('aggregation').value;
+
+            const groupedData = {};
+            
+            dataset.forEach(row => {
+                const key = row[xAxis];
+                if (!groupedData[key]) {
+                    groupedData[key] = [];
+                }
+                groupedData[key].push(parseFloat(row[yAxis]) || 0);
+            });
+
+            const labels = Object.keys(groupedData);
+            let data;
+
+            switch (aggregationType) {
+                case 'sum':
+                    data = labels.map(label => groupedData[label].reduce((a, b) => a + b, 0));
+                    break;
+                case 'average':
+                    data = labels.map(label => groupedData[label].reduce((a, b) => a + b, 0) / groupedData[label].length);
+                    break;
+                case 'count':
+                    data = labels.map(label => groupedData[label].length);
+                    break;
+                case 'max':
+                    data = labels.map(label => Math.max(...groupedData[label]));
+                    break;
+                case 'min':
+                    data = labels.map(label => Math.min(...groupedData[label]));
+                    break;
+            }
+
+            return { labels, data };
+        }
+
+        function updateChart() {
+            const chartType = document.getElementById('chartType').value;
+            const showLegend = document.getElementById('showLegend').checked;
+            const showGrid = document.getElementById('showGrid').checked;
+            const enableAnimation = document.getElementById('enableAnimation').checked;
+
+            const { labels, data } = aggregateData();
+
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+            
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const config = {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${document.getElementById('aggregation').value} of ${document.getElementById('yAxis').value}`,
+                        data: data,
+                        backgroundColor: selectedColor + '80',
+                        borderColor: selectedColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: enableAnimation ? 1000 : 0
+                    },
+                    plugins: {
+                        legend: {
+                            display: showLegend
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: showGrid
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: showGrid
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            currentChart = new Chart(ctx, config);
+        }
+
+        function setColorScheme(color) {
+            selectedColor = color;
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.style.background === color) {
+                    option.classList.add('selected');
+                }
+            });
+            updateChart();
+        }
+
+        function downloadChart() {
+            const link = document.createElement('a');
+            link.download = 'chart.png';
+            link.href = document.getElementById('chartCanvas').toDataURL('image/png');
+            link.click();
+        }
+
+        function resetChart() {
+            document.getElementById('chartType').value = 'bar';
+            document.getElementById('aggregation').value = 'sum';
+            document.getElementById('showLegend').checked = true;
+            document.getElementById('showGrid').checked = true;
+            document.getElementById('enableAnimation').checked = true;
+            setColorScheme('#FF69B4');
+            updateChart();
+        }
+
+        // Initialize
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
