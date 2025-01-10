@@ -9,7 +9,7 @@ class Agent5:
     def get_column_suggestions(columns, user_prompt):
           genai.configure(api_key="AIzaSyBdM9NfUa4-BSMyQgdHh5-IKcTMF-K5O3w")
           model = genai.GenerativeModel("gemini-1.5-flash")
-          prompt = f"You will now behave as the agent I describe. Below are the labels of the columns of my csv file. {columns}. \nHere is the prompt of the user {user_prompt}. Give me the essential columns related to this prompt from the columns I have. Give me only the columns in format 'Column1, Column2, Column3' etc. Do not say anything else in the message."
+          prompt = f"You will now behave as the agent I describe. Below are the labels of the columns of my csv file. {columns}. \nHere is the prompt of the user {user_prompt}. Give me the columns related to this prompt from the columns I have so that I can make a specialised csv file. Give me only the column names in format 'Column1, Column2, Column3' etc.  They usually are multiple. Do not say anything else in the message."
 
           response = model.generate_content(prompt)
           suggestions = response.text.strip().split("\n")

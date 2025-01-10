@@ -4,6 +4,7 @@ from agent2 import Agent2  # Importing Agent2
 from agent3 import Agent3  # Importing Agent3
 from agent5 import Agent5  # Importing Agent5
 from agent6 import Agent6  # Importing Agent6
+import subprocess
 import os
 
 app = Flask(__name__)
@@ -71,61 +72,6 @@ def get_latest_file():
         return jsonify({'file_path': latest_file_path}), 200
     return jsonify({'error': 'No file uploaded yet'}), 404
 
-# Agent 1 Route
-@app.route('/agent1/process', methods=['POST'])
-def agent1():
-    """
-    Process the user input using Agent 1's logic.
-    """
-    if not config["api_key"] or not config["user_input"]:
-        return jsonify({"error": "API key or user input not set"}), 400
-
-    # Agent 1 logic (example processing)
-    agent1_output = f"Agent 1 processed: {config['user_input']} using API key {config['api_key']}"
-    
-    return jsonify({"agent1_output": agent1_output})
-
-# Agent 2 Route
-@app.route('/agent2/process', methods=['POST'])
-def agent2():
-    """
-    Process Agent 1's output using Agent 2's logic.
-    """
-    if not config["api_key"] or not config["user_input"]:
-        return jsonify({"error": "API key or user input not set"}), 400
-
-    # Get data from Agent 1
-    data = request.json
-    agent1_output = data.get('agent1_output')
-
-    if not agent1_output:
-        return jsonify({"error": "Agent 1 output is required"}), 400
-
-    # Agent 2 logic (example processing)
-    agent2_output = f"Agent 2 enhanced: {agent1_output} using API key {config['api_key']}"
-    
-    return jsonify({"agent2_output": agent2_output})
-
-# Agent 3 Route
-@app.route('/agent3/process', methods=['POST'])
-def agent3():
-    """
-    Process Agent 2's output using Agent 3's logic.
-    """
-    if not config["api_key"] or not config["user_input"]:
-        return jsonify({"error": "API key or user input not set"}), 400
-
-    # Get data from Agent 2
-    data = request.json
-    agent2_output = data.get('agent2_output')
-
-    if not agent2_output:
-        return jsonify({"error": "Agent 2 output is required"}), 400
-
-    # Agent 3 logic (example processing)
-    agent3_output = f"Agent 3 refined: {agent2_output} using API key {config['api_key']}"
-
-    return jsonify({"agent3_output": agent3_output})
 
 # New route to set the prompt and store it in a file
 @app.route('/set_prompt', methods=['POST'])
@@ -154,6 +100,10 @@ def set_prompt():
         agent.agent5()
         agent = Agent6(latest_file_path)
         agent.agent6()
+
+        
+
+        
 
         return jsonify({"message": "Prompt stored successfully", "input_prompt": config["input_prompt"]})
     
