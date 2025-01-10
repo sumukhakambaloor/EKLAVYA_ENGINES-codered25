@@ -3,11 +3,13 @@ import string
 import nltk
 import shutil, os
 from nltk.corpus import stopwords
+from agent3 import Agent3
 
 # Download NLTK stopwords if not already present
 nltk.download('stopwords')
 
-class agent2:
+
+class Agent2:
     def __init__(self, csv_path):
          self.csv_path = csv_path
     
@@ -36,7 +38,7 @@ class agent2:
           # Stage 4: Remove punctuation, stop words, and special characters
           # Apply cleaning to all string columns
           for col in df.select_dtypes(include=['object']):
-               df[col] = df[col].apply(agent2.clean_text)
+               df[col] = df[col].apply(Agent2.clean_text)
           
           # Save the cleaned DataFrame to a new CSV file
           df.to_csv(output_file, index=False)
@@ -57,9 +59,8 @@ class agent2:
                print(f"An error occurred: {e}")
     
     def agent2(self):
-          input_file = "path/to/your_input_file.csv"
-          output_file = "path/to/processed_file.csv"
-          agent2.process_csv(input_file, output_file)
-          agent2.copy_and_delete_file(output_file, input_file)
-    
-
+          input_file = self.csv_path
+          output_file = "processed_test.csv"
+          Agent2.process_csv(input_file, output_file)
+          Agent2.copy_and_delete_file(output_file, input_file)
+          print("Agent 2 processing complete")

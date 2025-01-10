@@ -1,10 +1,13 @@
 import pandas as pd
 import google.generativeai as genai
+import os as os
+import shutil as shutil
 
-class agent3:
-    def __init__(self):
-         pass
-    
+
+
+class Agent3:   
+    def __init__(self, path):
+         self.path = path
 
     def calculate_new_columns(df, operations):
           for operation in operations:
@@ -33,23 +36,45 @@ class agent3:
           response = model.generate_content(prompt)
           suggestions = response.text.strip().split("\n")
           return suggestions
-    
+    def copy_and_delete_file(source_path, destination_path):
+         try:
+               # Copy the contents of the source file to the destination file
+               shutil.copyfile(source_path, destination_path)
+               print(f"Contents copied from {source_path} to {destination_path}")
+
+               # Delete the original file
+               os.remove(source_path)
+               print(f"Deleted the original file: {source_path}")
+         except FileNotFoundError:
+               print(f"File not found: {source_path}")
+         except Exception as e:
+               print(f"An error occurred: {e}")
     def agent3(self):
-          csv_file = "your_file.csv"
+          csv_file = self.path
+          if not os.path.exists(csv_file):
+            print(f"File not found: {csv_file}")
+            return
           df = pd.read_csv(csv_file)
 
           # Columns and user prompt
           columns = ", ".join(df.columns)
-          user_prompt = "Analyze sales and ratings data"
+
+          file_path = "prompts/latest_prompt.txt"  
+          with open(file_path, "r") as file:
+               file_contents = file.read()
+          user_prompt = file_contents
 
           # Get suggestions
-          suggestions = agent3.get_column_suggestions(columns, user_prompt)
+          suggestions = Agent3.get_column_suggestions(columns, user_prompt)
 
           # Add new columns
-          updated_df = agent3.calculate_new_columns(df, suggestions)
+          updated_df = Agent3.calculate_new_columns(df, suggestions)
 
           # Save updated CSV
           updated_csv_file = "updated_file.csv"
           updated_df.to_csv(updated_csv_file, index=False)
 
-          print(f"Updated CSV file saved as {updated_csv_file}")
+          Agent3.copy_and_delete_file(updated_csv_file, csv_file)
+
+          print(f"Updated the csv file [Agent 3 Completion]")
+

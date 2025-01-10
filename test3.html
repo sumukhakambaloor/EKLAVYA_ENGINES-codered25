@@ -232,129 +232,184 @@
 
     <nav>
         <div class="navbar-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 20px;">
-          <div class="navbar-left">
-            <img src="" alt="Logo" id="logo-placeholder"> <!-- Placeholder for Logo -->
-            <h2>Ekalavya Engines</h2>
-          </div>
-          
-          <!-- Centered Info button -->
-          <div class="navbar-center" style="flex-grow: 1; text-align: center;">
-            <button id="infoButton" style="margin-top: 1cm; padding: 15px 30px; font-size: 1.5em;">Info</button>
-          </div>
-      
-          <div class="navbar-right">
-            <!-- File upload and submit section -->
-            <div class="file-upload">
-              <button id="browseButton" onclick="showFileOptions()">Browse</button>
-              
-              <!-- Dropdown for file type selection -->
-              <select id="fileType" style="display:none;" onchange="handleFileTypeChange()">
-                <option value="">Select File Type</option>
-                <option value="csv">CSV</option>
-                <option value="excel">Excel</option>
-                <option value="json">JSON</option>
-                <option value="api">API</option>
-              </select>
-      
-              <!-- Local file selection input (hidden initially) -->
-              <input type="file" id="fileUpload" style="display:none;" accept=".csv, .xlsx, .xls, .json" onchange="handleFileUpload()">
-              
-              <!-- API endpoint input (hidden initially) -->
-              <input type="text" id="apiEndpoint" style="display:none;" placeholder="Enter API endpoint" onchange="handleAPIEndpoint()">
-              
-              <!-- Display selected path -->
-              <div id="selectedPathDisplay" style="display:none;"></div>
-      
-              <!-- Submit button (hidden initially) -->
-              <button id="submitButton" style="display:none;" onclick="submitFile()">Submit</button>
+            <div class="navbar-left">
+                <img src="" alt="Logo" id="logo-placeholder"> <!-- Placeholder for Logo -->
+                <h2>Ekalavya Engines</h2>
             </div>
-      
-            <!-- Mode Toggle Button -->
-            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-          </div>
+    
+            <!-- Centered Info button -->
+            <div class="navbar-center" style="flex-grow: 1; text-align: center;">
+                <button id="infoButton" style="margin-top: 1cm; padding: 15px 30px; font-size: 1.5em;">PRESENT</button>
+            </div>
+            
+            <script>
+                document.getElementById("infoButton").addEventListener("click", function() {
+                    window.location.href = "progress.html";
+                });
+            </script>
+            
+    
+            <div class="navbar-right">
+                <!-- File upload and submit section -->
+                <div class="file-upload">
+                    <button id="browseButton" onclick="showFileOptions()">Browse</button>
+    
+                    <!-- Dropdown for file type selection -->
+                    <select id="fileType" style="display:none;" onchange="handleFileTypeChange()">
+                        <option value="">Select File Type</option>
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel</option>
+                        <option value="json">JSON</option>
+                    </select>
+    
+                    <!-- Local file selection input (hidden initially) -->
+                    <input type="file" id="fileUpload" style="display:none;" accept=".csv, .xlsx, .xls, .json" onchange="handleFileUpload()">
+    
+                    <!-- Display selected path -->
+                    <div id="selectedPathDisplay" style="display:none;"></div>
+    
+                    <!-- Submit button (hidden initially) -->
+                    <button id="submitButton" style="display:none;" onclick="submitFile()">Submit</button>
+                </div>
+    
+                <!-- API button -->
+                <button id="apiButton" onclick="showApiInput()" style="margin-right: 20px;">API</button>
+    
+                <!-- API Endpoint and API Key input fields (hidden initially) -->
+                <div id="apiInputs" style="display:none; margin-top: 10px;">
+                    <input type="text" id="apiEndpoint" placeholder="Enter API Endpoint" style="margin-bottom: 10px; padding: 5px; width: 200px; display: block;">
+                    <input type="text" id="apiKey" placeholder="Enter API Key" style="padding: 5px; width: 200px; display: block;">
+                    <button id="apiSubmitButton" onclick="submitApiDetails()">Submit API Details</button>
+                </div>
+    
+                <!-- Mode Toggle Button -->
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
         </div>
-      </nav>
-      
-      <script>
-        let selectedPath = ''; // Store selected file or API endpoint
-      
+    </nav>
+    
+    <script>
+        let selectedFile = null; // Store the selected file
+    
         // Show the options when Browse is clicked
         function showFileOptions() {
-          document.getElementById('browseButton').style.display = 'none';  // Hide "Browse" button
-          document.getElementById('fileType').style.display = 'inline';    // Show file type dropdown
+            document.getElementById('browseButton').style.display = 'none'; // Hide "Browse" button
+            document.getElementById('fileType').style.display = 'inline'; // Show file type dropdown
         }
-      
+    
         // Handle the selection of file type
         function handleFileTypeChange() {
-          const fileType = document.getElementById('fileType').value;
-          const fileUpload = document.getElementById('fileUpload');
-          const apiEndpointInput = document.getElementById('apiEndpoint');
-          const selectedPathDisplay = document.getElementById('selectedPathDisplay');
-          const submitButton = document.getElementById('submitButton');
-      
-          // Reset fields first
-          selectedPath = '';
-          selectedPathDisplay.style.display = 'none';
-          submitButton.style.display = 'none'; // Hide Submit button
-      
-          if (fileType === 'api') {
-            fileUpload.style.display = 'none'; // Hide file upload
-            apiEndpointInput.style.display = 'inline'; // Show API endpoint input
-          } else {
-            apiEndpointInput.style.display = 'none'; // Hide API input
-            fileUpload.style.display = 'inline'; // Show file upload
-          }
+            const fileType = document.getElementById('fileType').value;
+            const fileUpload = document.getElementById('fileUpload');
+    
+            // Reset fields first
+            selectedFile = null;
+            document.getElementById('selectedPathDisplay').style.display = 'none';
+            document.getElementById('submitButton').style.display = 'none'; // Hide Submit button
+    
+            if (fileType) {
+                fileUpload.style.display = 'inline'; // Show file upload
+            } else {
+                fileUpload.style.display = 'none'; // Hide file upload
+            }
         }
-      
+    
         // Handle file upload (for CSV, Excel, JSON)
         function handleFileUpload() {
-          const fileInput = document.getElementById('fileUpload');
-          const file = fileInput.files[0];
-          if (file) {
-            selectedPath = file.name;
-            document.getElementById('selectedPathDisplay').textContent = `Selected file: ${selectedPath}`;
-            document.getElementById('selectedPathDisplay').style.display = 'block';
-            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
-          }
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selectedPathDisplay').textContent = `Selected file: ${selectedFile.name}`;
+                document.getElementById('selectedPathDisplay').style.display = 'block';
+                document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
+            }
         }
-      
-        // Handle API endpoint input
-        function handleAPIEndpoint() {
-          const apiInput = document.getElementById('apiEndpoint').value;
-          if (apiInput) {
-            selectedPath = apiInput;
-            document.getElementById('selectedPathDisplay').textContent = `Selected API: ${selectedPath}`;
-            document.getElementById('selectedPathDisplay').style.display = 'block';
-            document.getElementById('submitButton').style.display = 'inline'; // Show Submit button
-          }
+    
+        // Handle submit action for file upload
+        async function submitFile() {
+            if (!selectedFile) return;
+    
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+    
+            try {
+                const response = await fetch('http://localhost:5000/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    alert('File uploaded successfully!');
+                    // Redirect to progress.html after submission
+                    window.location.href = 'progress.html';
+                } else {
+                    alert('Failed to upload the file.');
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
         }
-      
-        // Handle submit action
-        function submitFile() {
-          alert(`Submitted: ${selectedPath}`);
-          // Redirect to progress2.html after submission
-          window.location.href = 'progress.html';
+    
+        // Show API input fields when API button is clicked
+        function showApiInput() {
+            const apiInputs = document.getElementById('apiInputs');
+            apiInputs.style.display = apiInputs.style.display === 'none' ? 'block' : 'none'; // Toggle visibility
         }
-      
+    
+        // Handle the API details submission
+        // Handle the API details submission
+        function submitApiDetails() {
+            const apiEndpoint = document.getElementById('apiEndpoint').value;
+            const apiKey = document.getElementById('apiKey').value;
+        
+            if (apiEndpoint && apiKey) {
+                // Prepare the API details to send to the Flask server
+                const apiDetails = {
+                    endpoint: apiEndpoint,
+                    key: apiKey
+                };
+        
+                // Send the API details to the server (corrected URL)
+                fetch('http://localhost:5000/api/save-api-details', { // Use the correct server URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(apiDetails),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('API Details Submitted:', data);
+                    alert('API Details Submitted!');
+                })
+                .catch(error => {
+                    console.error('Error submitting API details:', error);
+                    alert('Failed to submit API details.');
+                });
+            } else {
+                alert('Please fill in both the API Endpoint and API Key.');
+            }
+        }
+        
+    
         // Toggle between light and dark theme
         function toggleTheme() {
-          const body = document.body;
-          const themeToggle = document.querySelector('.theme-toggle');
-      
-          if (body.classList.contains('dark-theme')) {
-            body.classList.remove('dark-theme');
-            body.classList.add('light-theme');
-            themeToggle.textContent = '🌙'; // Switch to dark theme
-          } else {
-            body.classList.remove('light-theme');
-            body.classList.add('dark-theme');
-            themeToggle.textContent = '🌞'; // Switch to light theme
-          }
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle');
+    
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                themeToggle.textContent = '🌙'; // Switch to dark theme
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                themeToggle.textContent = '🌞'; // Switch to light theme
+            }
         }
-      </script>
-      
-      
-      
+    </script>
+    
 <!-- Heading Section -->
 <h1>Multi-Agent AI Data Analyst for Comprehensive Data Analysis and Reporting</h1>
 
@@ -368,7 +423,7 @@
       <p>Requirement Analyst</p>
       <p>Data Engineer</p>
       <p>Handles the initial input data and ensures all data is validated and ready for analysis.</p>
-      <button class="view-button">View</button>
+      <button class="view-button" onclick="window.location.href='input.html';">Prompt</button>
     </div>
   
     <div class="agent-box">
