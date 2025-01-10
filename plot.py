@@ -9,7 +9,7 @@ app = dash.Dash(__name__)
 app.title = "Ekalavya Engines Visualization Dashboard"
 
 # Load dataset from a linked CSV file
-data_path = "active/test.csv"  # Path to the CSV file
+data_path = "EKLAVYA_ENGINES\filtered_dataset.csv"  # Path to the CSV file
 data = pd.read_csv(data_path)
 
 # Layout of the app

@@ -25,6 +25,6 @@ class Agent6:
             file_contents = file.read()
         user_prompt = file_contents
 
-        suggestions = Agent6.get_query_suggestions(columns, user_prompt)
+        query = Agent6.get_query_suggestions(columns, user_prompt)
 
-        print(suggestions)
+        print(query)

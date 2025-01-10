@@ -3,6 +3,7 @@ from flask_cors import CORS  # Importing CORS
 from agent2 import Agent2  # Importing Agent2
 from agent3 import Agent3  # Importing Agent3
 from agent5 import Agent5  # Importing Agent5
+from agent6 import Agent6  # Importing Agent6
 import os
 
 app = Flask(__name__)
@@ -151,6 +152,8 @@ def set_prompt():
         agent.agent3()
         agent = Agent5(latest_file_path)
         agent.agent5()
+        agent = Agent6(latest_file_path)
+        agent.agent6()
 
         return jsonify({"message": "Prompt stored successfully", "input_prompt": config["input_prompt"]})
     

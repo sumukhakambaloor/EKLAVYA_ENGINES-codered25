@@ -13,7 +13,8 @@ class Agent5:
 
           response = model.generate_content(prompt)
           suggestions = response.text.strip().split("\n")
-          return suggestions
+          suggestions_list = suggestions[0].split(',')
+          return suggestions_list
 
     def agent5(self):
         csv_file = self.path
@@ -27,9 +28,16 @@ class Agent5:
 
         suggestions = Agent5.get_column_suggestions(columns, user_prompt)
 
-        filtered_df = df[suggestions]
-
-        # Save the filtered dataset to a new file
-        output_path = "filtered_dataset.csv"
-        filtered_df.to_csv(output_path, index=False)
-        print(f"Filtered dataset saved to {output_path}")
+        print("Partial completion of the task by Agent 5:")
+        
+        # Ensure the suggestions are valid column names in the DataFrame
+        valid_suggestions = [col for col in suggestions if col in df.columns]
+        
+        if valid_suggestions:
+            filtered_df = df[valid_suggestions]
+            # Save the filtered dataset to a new file
+            output_path = "filtered_dataset.csv"
+            filtered_df.to_csv(output_path, index=False)
+            print(f"Filtered dataset saved to {output_path}")
+        else:
+            print("No valid columns found based on the prompt.")
